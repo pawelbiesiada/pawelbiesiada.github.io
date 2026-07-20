@@ -1,7 +1,517 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paweł Biesiada — Software Architect</title>
+<meta name="description" content="Paweł Biesiada — Software Architect &amp; Senior .NET Developer at Sii Poland.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  /* Apply saved/preferred theme before first paint to avoid a flash */
+  (function(){
+    var saved = localStorage.getItem('theme');
+    var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<style>
+  :root{
+    --ink:#17212E;
+    --ink-soft:#4C5563;
+    --muted:#7C8695;
+    --paper:#FBFAF7;
+    --card:#FFFFFF;
+    --line:#E7E6E0;
+    --accent:#0F766E;
+    --accent-soft:#E4F0EE;
+  }
+  :root[data-theme="dark"]{
+    --ink:#EDEFF2;
+    --ink-soft:#C3C9D1;
+    --muted:#8992A0;
+    --paper:#12161C;
+    --card:#181D25;
+    --line:#2A3038;
+    --accent:#2DD4BF;
+    --accent-soft:#173430;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-font-smoothing:antialiased;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-weight:400;
+    line-height:1.55;
+    padding:40px 20px;
+    display:flex;
+    justify-content:center;
+    transition:background .2s ease,color .2s ease;
+  }
+  .sheet{
+    width:100%;
+    max-width:900px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:0 1px 2px rgba(23,33,46,.04),0 12px 40px rgba(23,33,46,.06);
+    transition:background .2s ease,border-color .2s ease;
+  }
+
+  /* ---- Toolbar ---- */
+  .toolbar{
+    max-width:900px;width:100%;
+    display:flex;justify-content:flex-end;align-items:center;gap:10px;
+    margin:0 auto 14px;
+  }
+  .lang-group{
+    display:flex;background:var(--card);border:1px solid var(--line);border-radius:100px;padding:3px;gap:2px;
+  }
+  .lang-btn{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;
+    border:none;background:transparent;color:var(--muted);
+    padding:6px 12px;border-radius:100px;cursor:pointer;font-weight:500;
+    transition:background .15s ease,color .15s ease;
+  }
+  .lang-btn:hover{color:var(--ink);}
+  .lang-btn.active{background:var(--accent);color:#fff;}
+  .theme-btn{
+    width:32px;height:32px;border-radius:100px;
+    border:1px solid var(--line);background:var(--card);color:var(--ink-soft);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:background .15s ease,color .15s ease;
+  }
+  .theme-btn:hover{color:var(--accent);}
+  .theme-btn svg{width:16px;height:16px;}
+  .theme-btn .icon-moon{display:none;}
+  :root[data-theme="dark"] .theme-btn .icon-sun{display:none;}
+  :root[data-theme="dark"] .theme-btn .icon-moon{display:block;}
+
+  /* ---- Header ---- */
+  header{
+    padding:44px 48px 34px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    display:flex;
+    gap:28px;
+    align-items:flex-start;
+  }
+  header::before{
+    content:"";
+    position:absolute;left:0;top:0;bottom:0;width:5px;
+    background:var(--accent);
+  }
+  .avatar-wrap{flex:0 0 auto;}
+  .avatar,.avatar-fallback{
+    width:96px;height:96px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    object-fit:cover;
+  }
+  .avatar{display:none;}
+  .avatar-fallback{
+    background:var(--accent-soft);
+    border:1.5px dashed #d3e6e3;
+    color:var(--accent);
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;font-size:28px;letter-spacing:-.01em;
+  }
+  :root[data-theme="dark"] .avatar-fallback{border-color:#204943;}
+  .header-text{flex:1 1 auto;min-width:0;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent);font-weight:500;margin-bottom:14px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;font-size:44px;line-height:1.02;letter-spacing:-.02em;
+  }
+  .headline{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:400;font-size:18px;color:var(--ink-soft);
+    margin-top:10px;letter-spacing:-.01em;
+  }
+  .meta-row{
+    display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:22px;
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted);
+  }
+  .meta-row a{color:var(--accent);text-decoration:none;font-weight:500;}
+  .meta-row a:hover{text-decoration:underline;}
+  .meta-row span::before{content:"◦";margin-right:8px;color:var(--line);}
+
+  /* ---- Body grid ---- */
+  .grid{display:grid;grid-template-columns:1fr 1.55fr;}
+  .aside{padding:34px 40px 40px 48px;border-right:1px solid var(--line);}
+  .main{padding:34px 48px 40px 40px;}
+
+  .summary{font-size:14.5px;color:var(--ink-soft);line-height:1.62;}
+
+  .block{margin-top:30px;}
+  .block-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;
+    padding-bottom:9px;margin-bottom:16px;border-bottom:1px solid var(--line);
+  }
+
+  .tags{display:flex;flex-wrap:wrap;gap:7px;}
+  .tag{
+    font-size:12.5px;padding:4px 11px;border-radius:100px;
+    background:var(--accent-soft);color:var(--accent);font-weight:500;
+    border:1px solid #d3e6e3;
+  }
+  :root[data-theme="dark"] .tag{border-color:#204943;}
+
+  .lang{display:flex;justify-content:space-between;align-items:baseline;
+    padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .lang:last-child{border-bottom:none;}
+  .lang .lv{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+
+  .edu-item{margin-bottom:15px;}
+  .edu-item:last-child{margin-bottom:0;}
+  .edu-deg{font-weight:550;font-size:13.5px;}
+  .edu-school{font-size:13px;color:var(--ink-soft);}
+  .edu-year{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;}
+
+  /* ---- Timeline ---- */
+  .timeline{position:relative;padding-left:22px;}
+  .timeline::before{
+    content:"";position:absolute;left:4px;top:6px;bottom:6px;
+    width:1.5px;background:var(--line);
+  }
+  .role{position:relative;padding-bottom:22px;}
+  .role:last-child{padding-bottom:0;}
+  .role::before{
+    content:"";position:absolute;left:-22px;top:5px;
+    width:9px;height:9px;border-radius:50%;
+    background:var(--card);border:2px solid var(--muted);
+  }
+  .role.current::before{background:var(--accent);border-color:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-soft);}
+  .role-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+  .role-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15.5px;letter-spacing:-.01em;}
+  .role-dates{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;}
+  .role-co{font-size:13px;color:var(--accent);font-weight:500;margin-top:1px;}
+  .role-desc{font-size:12.5px;color:var(--ink-soft);margin-top:5px;line-height:1.5;}
+
+  .certs{list-style:none;}
+  .cert{display:flex;gap:10px;font-size:13px;padding:6px 0;color:var(--ink-soft);}
+  .cert .yr{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:34px;}
+  .cert .nm{font-weight:450;color:var(--ink);}
+  .cert .au{color:var(--muted);}
+
+  footer{
+    padding:16px 48px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.04em;
+  }
+  footer a{color:var(--accent);text-decoration:none;}
+
+  @media (max-width:680px){
+    body{padding:16px 0;}
+    .toolbar{padding:0 16px;margin-bottom:12px;}
+    .sheet{border-radius:0;border-left:none;border-right:none;}
+    header{padding:34px 26px 26px;flex-direction:column;}
+    h1{font-size:34px;}
+    .grid{grid-template-columns:1fr;}
+    .aside{border-right:none;border-bottom:1px solid var(--line);padding:28px 26px;}
+    .main{padding:28px 26px;}
+    footer{padding:14px 26px;flex-direction:column;gap:6px;text-align:center;}
+  }
+
+  @media print{
+    @page{size:A4;margin:12mm;}
+    body{background:#fff;padding:0;}
+    .toolbar{display:none;}
+    .sheet{box-shadow:none;border:none;max-width:100%;}
+    header::before{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .tag,.role.current::before{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+
+<div class="toolbar">
+  <div class="lang-group" role="group" aria-label="Language">
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn" data-lang="pl" type="button">PL</button>
+    <button class="lang-btn" data-lang="de" type="button">DE</button>
+  </div>
+  <button class="theme-btn" id="themeToggle" type="button" aria-label="Toggle dark mode">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+  </button>
+</div>
+
+<div class="sheet">
+
+  <header>
+    <div class="avatar-wrap">
+      <!-- Once you have a photo, drop it at assets/img/photo.jpg — it will replace this placeholder automatically. -->
+      <img class="avatar" id="avatarImg" src="assets/img/photo.jpg" alt="Paweł Biesiada"
+           onload="this.style.display='block'; document.getElementById('avatarFallback').style.display='none';"
+           onerror="this.style.display='none';">
+      <div class="avatar-fallback" id="avatarFallback">PB</div>
+    </div>
+    <div class="header-text">
+      <div class="eyebrow" data-i18n="eyebrow">Software Architect · .NET / C#</div>
+      <h1>Paweł Biesiada</h1>
+      <div class="headline" data-i18n="headline">Architect &amp; Senior .NET Developer at Sii Poland</div>
+      <div class="meta-row">
+        <a href="https://www.linkedin.com/in/pawelbiesiada/">linkedin.com/in/pawelbiesiada</a>
+        <span data-i18n="location">Poznań, Poland</span>
+        <span data-i18n="industry">Financial Services</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- LEFT -->
+    <div class="aside">
+      <p class="summary" data-i18n="summary">
+        Software architect with ~15 years designing and leading .NET / C# systems —
+        from financial-services platforms at Franklin Templeton to enterprise solutions
+        at Sii. Grew from developer to team lead to architect, with a steady focus on
+        maintainable design, knowledge sharing, and mentoring engineers.
+      </p>
+
+      <div class="block">
+        <div class="block-title" data-i18n="skillsTitle">Core Skills</div>
+        <div class="tags">
+          <span class="tag">C#</span>
+          <span class="tag">.NET</span>
+          <span class="tag">MS SQL Server</span>
+          <span class="tag">WPF / WCF / WF</span>
+          <span class="tag">Entity Framework</span>
+          <span class="tag">Java</span>
+          <span class="tag">Unit Testing</span>
+          <span class="tag">UML</span>
+          <span class="tag">Windows Server</span>
+          <span class="tag">Azure</span>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title" data-i18n="langsTitle">Languages</div>
+        <div class="lang"><span data-i18n="langPolish">Polish</span><span class="lv" data-i18n="lvNative">NATIVE</span></div>
+        <div class="lang"><span data-i18n="langEnglish">English</span><span class="lv" data-i18n="lvProfessional">PROFESSIONAL</span></div>
+        <div class="lang"><span data-i18n="langGerman">German</span><span class="lv" data-i18n="lvBasic">BASIC</span></div>
+      </div>
+
+      <div class="block">
+        <div class="block-title" data-i18n="eduTitle">Education</div>
+        <div class="edu-item">
+          <div class="edu-deg" data-i18n="eduDeg">Master's degree</div>
+          <div class="edu-school" data-i18n="eduSchool">Adam Mickiewicz University, Poznań</div>
+          <div class="edu-year">2006 – 2011</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="main">
+      <div class="block-title" style="margin-top:0;" data-i18n="expTitle">Experience</div>
+      <div class="timeline">
+
+        <div class="role current">
+          <div class="role-top">
+            <div class="role-title" data-i18n="role1_title">Architect</div>
+            <div class="role-dates" data-i18n="role1_dates">Oct 2023 — Present</div>
+          </div>
+          <div class="role-co" data-i18n="role1_co">Sii Poland</div>
+        </div>
+
+        <div class="role current">
+          <div class="role-top">
+            <div class="role-title" data-i18n="role2_title">Senior .NET Developer</div>
+            <div class="role-dates" data-i18n="role2_dates">Jul 2016 — Present</div>
+          </div>
+          <div class="role-co" data-i18n="role2_co">Sii Poland</div>
+          <div class="role-desc" data-i18n="role2_desc">C# / .NET development &amp; design — WPF, WCF, WF, Unity, EF. Knowledge sharing.</div>
+        </div>
+
+        <div class="role current">
+          <div class="role-top">
+            <div class="role-title" data-i18n="role3_title">IT Trainer</div>
+            <div class="role-dates" data-i18n="role3_dates">Jun 2018 — Present</div>
+          </div>
+          <div class="role-co">JSystems</div>
+          <div class="role-desc" data-i18n="role3_desc">Conducting .NET workshops and preparing training materials.</div>
+        </div>
+
+        <div class="role">
+          <div class="role-top">
+            <div class="role-title" data-i18n="role4_title">Team Leader</div>
+            <div class="role-dates" data-i18n="role4_dates">May 2018 — Apr 2020</div>
+          </div>
+          <div class="role-co" data-i18n="role4_co">Sii Poland</div>
+        </div>
+
+        <div class="role">
+          <div class="role-top">
+            <div class="role-title" data-i18n="role5_title">Software Engineer</div>
+            <div class="role-dates" data-i18n="role5_dates">Nov 2011 — Mar 2016</div>
+          </div>
+          <div class="role-co">Franklin Templeton Investments</div>
+          <div class="role-desc" data-i18n="role5_desc">Designed &amp; built C#/.NET (and Java) applications; MS SQL 2005/2008; in-house app support; Windows Server administration; security &amp; audit.</div>
+        </div>
+
+        <div class="role">
+          <div class="role-top">
+            <div class="role-title" data-i18n="role6_title">Junior Database Administrator</div>
+            <div class="role-dates" data-i18n="role6_dates">Jul 2010 — Dec 2010</div>
+          </div>
+          <div class="role-co">Present Service</div>
+          <div class="role-desc" data-i18n="role6_desc">MS SQL databases, in-house C#/.NET apps, Windows Server administration, IT support.</div>
+        </div>
+
+      </div>
+
+      <div class="block">
+        <div class="block-title" data-i18n="certsTitle">Certifications</div>
+        <ul class="certs">
+          <li class="cert"><span class="yr">2021</span><span><span class="nm">Azure Fundamentals</span> <span class="au">— Microsoft</span></span></li>
+          <li class="cert"><span class="yr">2018</span><span><span class="nm">Querying Data with Transact-SQL (Exam 761)</span> <span class="au">— Microsoft</span></span></li>
+          <li class="cert"><span class="yr">2015</span><span><span class="nm">Programming in C# Specialist</span> <span class="au">— Microsoft</span></span></li>
+          <li class="cert"><span class="yr">2015</span><span><span class="nm">Claritas Investment Certificate</span> <span class="au">— CFA Institute</span></span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span data-i18n="footerRole">Paweł Biesiada · Software Architect</span>
+    <a href="https://www.linkedin.com/in/pawelbiesiada/">in/pawelbiesiada</a>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var translations = {
+    en: {
+      eyebrow: "Software Architect · .NET / C#",
+      headline: "Architect & Senior .NET Developer at Sii Poland",
+      location: "Poznań, Poland",
+      industry: "Financial Services",
+      summary: "Software architect with ~15 years designing and leading .NET / C# systems — from financial-services platforms at Franklin Templeton to enterprise solutions at Sii. Grew from developer to team lead to architect, with a steady focus on maintainable design, knowledge sharing, and mentoring engineers.",
+      skillsTitle: "Core Skills",
+      langsTitle: "Languages",
+      langPolish: "Polish", langEnglish: "English", langGerman: "German",
+      lvNative: "NATIVE", lvProfessional: "PROFESSIONAL", lvBasic: "BASIC",
+      eduTitle: "Education",
+      eduDeg: "Master's degree",
+      eduSchool: "Adam Mickiewicz University, Poznań",
+      expTitle: "Experience",
+      role1_title: "Architect", role1_dates: "Oct 2023 — Present", role1_co: "Sii Poland",
+      role2_title: "Senior .NET Developer", role2_dates: "Jul 2016 — Present", role2_co: "Sii Poland",
+      role2_desc: "C# / .NET development & design — WPF, WCF, WF, Unity, EF. Knowledge sharing.",
+      role3_title: "IT Trainer", role3_dates: "Jun 2018 — Present",
+      role3_desc: "Conducting .NET workshops and preparing training materials.",
+      role4_title: "Team Leader", role4_dates: "May 2018 — Apr 2020", role4_co: "Sii Poland",
+      role5_title: "Software Engineer", role5_dates: "Nov 2011 — Mar 2016",
+      role5_desc: "Designed & built C#/.NET (and Java) applications; MS SQL 2005/2008; in-house app support; Windows Server administration; security & audit.",
+      role6_title: "Junior Database Administrator", role6_dates: "Jul 2010 — Dec 2010",
+      role6_desc: "MS SQL databases, in-house C#/.NET apps, Windows Server administration, IT support.",
+      certsTitle: "Certifications",
+      footerRole: "Paweł Biesiada · Software Architect"
+    },
+    pl: {
+      eyebrow: "Architekt Oprogramowania · .NET / C#",
+      headline: "Architekt i starszy programista .NET w Sii Polska",
+      location: "Poznań, Polska",
+      industry: "Usługi finansowe",
+      summary: "Architekt oprogramowania z ~15-letnim doświadczeniem w projektowaniu i prowadzeniu systemów .NET / C# — od platform dla sektora finansowego w Franklin Templeton po rozwiązania enterprise w Sii. Przeszedł drogę od programisty przez team leadera do architekta, konsekwentnie stawiając na łatwe w utrzymaniu projektowanie, dzielenie się wiedzą i mentoring inżynierów.",
+      skillsTitle: "Kluczowe umiejętności",
+      langsTitle: "Języki",
+      langPolish: "Polski", langEnglish: "Angielski", langGerman: "Niemiecki",
+      lvNative: "OJCZYSTY", lvProfessional: "ZAAWANSOWANY", lvBasic: "PODSTAWOWY",
+      eduTitle: "Wykształcenie",
+      eduDeg: "Tytuł magistra",
+      eduSchool: "Uniwersytet im. Adama Mickiewicza, Poznań",
+      expTitle: "Doświadczenie",
+      role1_title: "Architekt", role1_dates: "Paź 2023 — obecnie", role1_co: "Sii Polska",
+      role2_title: "Starszy Programista .NET", role2_dates: "Lip 2016 — obecnie", role2_co: "Sii Polska",
+      role2_desc: "Projektowanie i rozwój w C# / .NET — WPF, WCF, WF, Unity, EF. Dzielenie się wiedzą.",
+      role3_title: "Trener IT", role3_dates: "Cze 2018 — obecnie",
+      role3_desc: "Prowadzenie warsztatów .NET oraz przygotowywanie materiałów szkoleniowych.",
+      role4_title: "Lider Zespołu", role4_dates: "Maj 2018 — Kwi 2020", role4_co: "Sii Polska",
+      role5_title: "Inżynier Oprogramowania", role5_dates: "Lis 2011 — Mar 2016",
+      role5_desc: "Projektowanie i tworzenie aplikacji C#/.NET (oraz Java); MS SQL 2005/2008; wsparcie aplikacji wewnętrznych; administracja Windows Server; bezpieczeństwo i audyt.",
+      role6_title: "Młodszy Administrator Baz Danych", role6_dates: "Lip 2010 — Gru 2010",
+      role6_desc: "Bazy danych MS SQL, wewnętrzne aplikacje C#/.NET, administracja Windows Server, wsparcie IT.",
+      certsTitle: "Certyfikaty",
+      footerRole: "Paweł Biesiada · Architekt Oprogramowania"
+    },
+    de: {
+      eyebrow: "Softwarearchitekt · .NET / C#",
+      headline: "Architekt & Senior .NET-Entwickler bei Sii Polska",
+      location: "Poznań, Polen",
+      industry: "Finanzdienstleistungen",
+      summary: "Softwarearchitekt mit ~15 Jahren Erfahrung in Design und Leitung von .NET-/C#-Systemen — von Finanzdienstleistungsplattformen bei Franklin Templeton bis zu Enterprise-Lösungen bei Sii. Entwicklung vom Developer über den Team Lead bis zum Architekten, mit stetigem Fokus auf wartbares Design, Wissenstransfer und Mentoring von Ingenieuren.",
+      skillsTitle: "Kernkompetenzen",
+      langsTitle: "Sprachen",
+      langPolish: "Polnisch", langEnglish: "Englisch", langGerman: "Deutsch",
+      lvNative: "MUTTERSPRACHE", lvProfessional: "VERHANDLUNGSSICHER", lvBasic: "GRUNDKENNTNISSE",
+      eduTitle: "Ausbildung",
+      eduDeg: "Master-Abschluss",
+      eduSchool: "Adam-Mickiewicz-Universität, Poznań",
+      expTitle: "Berufserfahrung",
+      role1_title: "Architekt", role1_dates: "Okt. 2023 — heute", role1_co: "Sii Polska",
+      role2_title: "Senior .NET-Entwickler", role2_dates: "Juli 2016 — heute", role2_co: "Sii Polska",
+      role2_desc: "Entwicklung und Design in C# / .NET — WPF, WCF, WF, Unity, EF. Wissenstransfer.",
+      role3_title: "IT-Trainer", role3_dates: "Juni 2018 — heute",
+      role3_desc: "Durchführung von .NET-Workshops und Erstellung von Schulungsunterlagen.",
+      role4_title: "Teamleiter", role4_dates: "Mai 2018 — Apr. 2020", role4_co: "Sii Polska",
+      role5_title: "Softwareentwickler", role5_dates: "Nov. 2011 — März 2016",
+      role5_desc: "Entwurf und Entwicklung von C#/.NET- (und Java-) Anwendungen; MS SQL 2005/2008; Support interner Anwendungen; Windows-Server-Administration; Sicherheit und Audit.",
+      role6_title: "Junior Datenbankadministrator", role6_dates: "Juli 2010 — Dez. 2010",
+      role6_desc: "MS-SQL-Datenbanken, interne C#/.NET-Anwendungen, Windows-Server-Administration, IT-Support.",
+      certsTitle: "Zertifikate",
+      footerRole: "Paweł Biesiada · Softwarearchitekt"
+    }
+  };
+
+  var langBtns = document.querySelectorAll('.lang-btn');
+  var i18nEls = document.querySelectorAll('[data-i18n]');
+
+  function applyLang(lang){
+    if(!translations[lang]) lang = 'en';
+    var dict = translations[lang];
+    i18nEls.forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(dict[key] !== undefined) el.textContent = dict[key];
+    });
+    langBtns.forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    document.documentElement.lang = lang;
+    localStorage.setItem('lang', lang);
+  }
+
+  langBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){ applyLang(btn.getAttribute('data-lang')); });
+  });
+
+  var browserLang = (navigator.language || 'en').slice(0,2);
+  var initialLang = localStorage.getItem('lang') || (translations[browserLang] ? browserLang : 'en');
+  applyLang(initialLang);
+
+  var themeBtn = document.getElementById('themeToggle');
+  themeBtn.addEventListener('click', function(){
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+})();
+</script>
+
 </body>
 </html>
